@@ -14,10 +14,7 @@ class Lexer {
     public:
 
     // Constructor
-    Lexer(
-        const std::string& source,
-        const std::string& filename
-    );
+    Lexer(const std::string& source, const std::string& filename);
 
     // Get the next token
     Token nextToken();
@@ -33,7 +30,7 @@ class Lexer {
     std::string source_;
     std::string filename_;
 
-    std::size_t pose_;
+    std::size_t pos_;
     int line_;
     int col_;
 
@@ -61,7 +58,7 @@ class Lexer {
 
     Token scanWhiteSpace();
 
-    Token scanComment(Token& errorToken); // comment or undetermined_comment
+    Token scanComment(); 
 
     Token scanIdentifierOrKeyword();
 
