@@ -15,6 +15,17 @@ Lexer::Lexer(const std::string& source, const std::string& filename)
 {
 }
 
+void Lexer::reportError(const std::string& message, int line, int col) {
+    Diagnostic diagnostic;
+
+    diagnostic.location.filename = filename_;
+    diagnostic.location.line = line;
+    diagnostic.location.col = col;
+    diagnostic.message = message;
+
+    diagnostics_.push_back(diagnostic);
+}
+
  // Navigation helpers
 
  bool Lexer::isAtEnd() const {
@@ -120,6 +131,8 @@ Lexer::Lexer(const std::string& source, const std::string& filename)
 
         // check maximum identifier length
         if (lexeme.length() > MAX_IDENT_LENGTH){
+            reportError("identifier exceeds 256 characters", startLine, startCol);
+
             return makeToken(
                 TokenType::INVALID,
                 startPos, 
@@ -202,6 +215,8 @@ Lexer::Lexer(const std::string& source, const std::string& filename)
             advance(); //consume closing "
 
             if (tooLong){
+                reportError("string literal exceeds 256 characters", startLine, startCol);
+
                 return makeToken(
                     TokenType::INVALID,
                     startPos,
@@ -217,6 +232,8 @@ Lexer::Lexer(const std::string& source, const std::string& filename)
                 startCol
             );
         }
+
+        reportError("unterminated string literal", startLine, startCol);
 
         return makeToken(
             TokenType::UNTERMINATED_STRING,
@@ -237,6 +254,12 @@ Lexer::Lexer(const std::string& source, const std::string& filename)
 
         // check for empty chracter or newline or EOF
         if (isAtEnd() || peek() == '\'' || peek() == '\n' || peek() == '\r'){
+            if (peek() == '\'') {
+            advance();   // consume the second ' of ''
+        }
+        
+            reportError("invalid character literal", startLine, startCol);
+            
             return makeToken(
                 TokenType::INVALID,
                 startPos,
@@ -250,6 +273,8 @@ Lexer::Lexer(const std::string& source, const std::string& filename)
             advance(); // consume backslash
 
             if (isAtEnd() || peek() == '\n' || peek() == '\r') {
+                reportError("invalid character literal", startLine, startCol);
+                
                 return makeToken(
                     TokenType::INVALID,
                     startPos, 
@@ -284,6 +309,8 @@ Lexer::Lexer(const std::string& source, const std::string& filename)
         if (peek() == '\''){
             advance(); // consume closing '
         }
+
+        reportError("invalid character literal", startLine, startCol);
 
         return makeToken(
             TokenType::INVALID,
@@ -338,6 +365,8 @@ Lexer::Lexer(const std::string& source, const std::string& filename)
         }
 
         // block comment was never closed
+        reportError("unterminated block comment", startLine, startCol);
+
         return makeToken(
             TokenType::UNTERMINATED_COMMENT,
             startPos,
@@ -408,7 +437,15 @@ Lexer::Lexer(const std::string& source, const std::string& filename)
         }
 
         // unknown chracter
+        char bad = peek();
+
         advance();
+
+        reportError(
+            "invalid character '" + std::string(1, bad) + "'",
+            startLine,
+            startCol
+        );
 
         return makeToken(
             TokenType::INVALID,

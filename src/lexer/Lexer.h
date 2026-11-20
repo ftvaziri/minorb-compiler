@@ -7,6 +7,7 @@
 #include <vector>
 #include <unordered_set>
 #include <cstddef>
+#include "Diagnostic.h"
 
 class Lexer {
 
@@ -22,6 +23,11 @@ class Lexer {
     // Get all tokens until END_OF_FILE
     std::vector<Token> tokenize();
 
+    // Get all lexical diagnostics
+    const std::vector<Diagnostic>& diagnostics() const {
+    return diagnostics_;
+}
+
 
     private:
 
@@ -34,6 +40,8 @@ class Lexer {
     int line_;
     int col_;
 
+    std::vector<Diagnostic> diagnostics_;
+
 
     // Navigation helpers
 
@@ -42,6 +50,8 @@ class Lexer {
     char advance();
 
     bool isAtEnd() const;
+
+    void reportError(const std::string& message, int line, int col);
 
 
     // Token creation
