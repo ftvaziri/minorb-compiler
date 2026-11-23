@@ -5,6 +5,7 @@
 #include <memory>
 #include <string>
 #include <vector>
+#include <initializer_list>
 
 #include "Ast.h"
 #include "Diagnostic.h"
@@ -43,6 +44,7 @@ private:
 
     // Errors
     void reportError(const std::string& message, const SourceLocation& location);
+    std::unique_ptr<Node> makeError(const SourceLocation& location);
     // Skips tokens until just after ';' (consumed), or before '}' or one of
     // if / for / return / print (not consumed), or END_OF_FILE.
     void synchronize();
@@ -58,6 +60,7 @@ private:
     std::unique_ptr<Node> parseParam();
 
     // Types
+    std::unique_ptr<Node> parseAtomicType();
     std::unique_ptr<Node> parseType();
     std::unique_ptr<Node> parseParameterType();
     std::unique_ptr<Node> parseReturnType();
@@ -76,6 +79,9 @@ private:
     std::unique_ptr<Node> parseFor();
 
     // Expressions (lowest to highest precedence)
+    using ParseFn = std::unique_ptr<Node> (Parser::*)();
+    std::unique_ptr<Node> parseBinaryLevel(ParseFn next,
+                                           std::initializer_list<const char*> ops);
     std::unique_ptr<Node> parseExpression();
     std::unique_ptr<Node> parseAssignment();
     std::unique_ptr<Node> parseOr();
