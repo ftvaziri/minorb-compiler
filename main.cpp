@@ -8,7 +8,8 @@
 #include "src/parser/Ast.h"
 #include "src/parser/AstPrinter.h"
 #include "src/parser/Parser.h"
-#include "Highlighter.h"
+#include "src/highlighter/Highlighter.h"
+#include "src/highlighter/AnsiRenderer.h"
 
 
 // چاپ Diagnosticها
@@ -84,7 +85,15 @@ main: function integer () = {
     std::vector<HighlightedToken> highlighted =
         highlighter.highlight(tokens, ast.get());
 
-    // 4. Print results
+    // 4. ANSI Rendering
+    AnsiRenderer renderer;
+
+    std::string coloredOutput = renderer.render(highlighted);
+
+    std::cout << "\n--- ANSI Highlighter Output ---\n";
+    std::cout << coloredOutput << '\n';
+
+    // 5. Print results
     std::cout << "\n--- Highlighter Test ---\n";
 
     for (const auto& item : highlighted) {
