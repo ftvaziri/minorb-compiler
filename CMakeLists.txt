@@ -12,8 +12,10 @@ set(CMAKE_CXX_EXTENSIONS OFF)
 add_executable(minorb
     main.cpp
     src/lexer/Lexer.cpp
+    src/parser/AstPrinter.cpp
 )
 
 target_include_directories(minorb PRIVATE
     src/lexer
+    src/parser
 )
