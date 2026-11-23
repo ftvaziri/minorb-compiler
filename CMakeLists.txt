@@ -14,9 +14,11 @@ add_executable(minorb
     src/lexer/Lexer.cpp
     src/parser/AstPrinter.cpp
     src/parser/Parser.cpp
+    src/highlighter/Highlighter.cpp
 )
 
 target_include_directories(minorb PRIVATE
     src/lexer
     src/parser
+    src/highlighter
 )
