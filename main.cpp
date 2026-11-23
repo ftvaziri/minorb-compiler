@@ -2,6 +2,7 @@
 #include <string>
 #include <utility>
 #include <vector>
+#include <fstream>
 
 #include "src/lexer/Lexer.h"
 #include "src/lexer/Diagnostic.h"
@@ -10,6 +11,8 @@
 #include "src/parser/Parser.h"
 #include "src/highlighter/Highlighter.h"
 #include "src/highlighter/AnsiRenderer.h"
+#include "src/highlighter/HtmlRenderer.h"
+
 
 
 // چاپ Diagnosticها
@@ -144,6 +147,21 @@ main: function integer () = {
 
         std::cout << '\n';
     }
+
+    HtmlRenderer htmlRenderer;
+
+std::string htmlOutput = htmlRenderer.render(highlighted);
+
+std::ofstream htmlFile("output.html");
+
+if (htmlFile.is_open()) {
+    htmlFile << htmlOutput;
+    htmlFile.close();
+
+    std::cout << "HTML output saved to output.html\n";
+} else {
+    std::cerr << "Failed to create HTML file\n";
+}
 }
 
 int main() {

@@ -16,6 +16,8 @@ add_executable(minorb
     src/parser/Parser.cpp
     src/highlighter/Highlighter.cpp
     src/highlighter/AnsiRenderer.cpp
+    src/highlighter/AnsiRenderer.cpp
+    src/highlighter/HtmlRenderer.cpp
 )
 
 target_include_directories(minorb PRIVATE
